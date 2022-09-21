@@ -27,6 +27,7 @@ class preprocessing:
         print(sr)
         plt.savefig(self.name+"_STFT.png")
         # plt.show()
+        return y
 
 
 
