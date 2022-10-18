@@ -1,5 +1,6 @@
 
 # konversi binary raw data audio dan plotting
+# save plotting sesuai nama path_file
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,7 +15,6 @@ f = open(f"{path_file}", "rb")
 byte = f.read(2)
 y = []
 while byte:
-    # print(byte)
     byte = f.read(2)
     data_y = int.from_bytes(byte, "big", signed=True) 
     tmp = scaling(data_y,xmax=4095 ,xmin=-1) 
