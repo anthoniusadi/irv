@@ -1,4 +1,5 @@
 
+# konversi binary raw data audio dan plotting
 import matplotlib.pyplot as plt
 import numpy as np
 
