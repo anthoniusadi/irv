@@ -17,9 +17,9 @@ import os
 # process each file in folder
 folderName_audio = 'data/lebokekenedatane/raw_au'
 for f in os.listdir(folderName_audio):
-    p_file = os.path.join(folderName_audio,f)
-    print(p_file)
-    audio_preprocessing = preprocessing(p_file,'output_audio',8000)
+    au_file = os.path.join(folderName_audio,f)
+    print(au_file)
+    audio_preprocessing = preprocessing(au_file,'output_audio',8000)
     y = audio_preprocessing.audio()
     plot(y,save=True,name_save=f)
 
@@ -27,9 +27,9 @@ for f in os.listdir(folderName_audio):
 
 folderName_acel = 'data/lebokekenedatane/raw_acc/'
 for f in os.listdir(folderName_acel):
-    p_file = os.path.join(folderName_acel,f)
-    print(p_file)
-    vib_preprocessing = preprocessing(p_file,'output_vib',400)
+    acc_file = os.path.join(folderName_acel,f)
+    print(acc_file)
+    vib_preprocessing = preprocessing(acc_file,'output_vib',400)
     y=vib_preprocessing.vibration()
     plot(y,save=True,name_save=f)
     print(f'{f} is process')

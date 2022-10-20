@@ -84,7 +84,7 @@ def plot(data_y,save=False,name_save='waveForm'):
     plt.plot(x, y)  
     if save:
 
-        if(name_save[:3]==('vib')):
+        if('acc' in name_save):
             plt.savefig(f'data/lebokekenedatane/gambar/vib/{name_save}.png')
             print(f'plot data {name_save}.png saved\n')
         else:
