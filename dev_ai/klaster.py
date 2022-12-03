@@ -44,7 +44,8 @@ def acc_fft(sgn, fs=400):
     fig, ax = plt.subplots()
     plt.title('acc')
     ax.set_xlim(0, fs / 2)
-    ax.plot(xtime,power)
+    ax.plot(np.arange(len(y)),power,label = 'freq',color='blue')
+    
     # plt.savefig(f'cnth.png')
     plt.show()
     return power
@@ -102,6 +103,8 @@ path_folder = './data/temp_data/2022_11_15/acc/'
 # filter sg
 for i in os.listdir(path_folder):
     enc,x,y = encode(path_folder,i)
-    filt = filter.sg_filter(enc)
-    filter.show(filt,x,y)
+    filt = filter.sg_filter(enc,window_length=15,orde=3)
+    # filter.show(x,enc)
+    acc_fft(filt)
+    
 
