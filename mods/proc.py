@@ -47,7 +47,6 @@ class preprocessing:
         y[-1] = y[-2]
         file_out.write(str(y))
         print(f'raw data vibration saved in {folder_csv}')
-
         return y
 
     def audio(self):

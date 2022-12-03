@@ -9,7 +9,7 @@ start = time.time()
 # from mods.cleaning import cleaning
 # from mods.preorocess import convert_wav
 import matplotlib.pyplot as plt
-file_name = 'tes12 8kHz 10 bit'
+file_name = '/home/epiphany/dev_irv/irv/Data Pengukuran/au_1668432863_3568729_13969377_125'
 # 
 txt = file_name+'.txt'
 def butter_highpass(cutoff, fs, order=5):
@@ -37,7 +37,7 @@ print(len(values))
 data_x = np.arange(len(values))
 plot(data_x,values,name=file_name+'(40000)')
 
-file_convert = preprocessing(values,name=file_name+'(40000)',fr=4000.0)
+file_convert = preprocessing(values,name=file_name+'(40000)',fr=8000.0)
 # mods.preprocessing.convert_wav(values,name=file_name+'(40000)',fr=40000)
 file_convert.convert_wav()
 hasil_stft = file_convert.stft(file_name+'(40000).wav',sr=4000)

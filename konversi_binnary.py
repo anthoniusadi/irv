@@ -5,7 +5,7 @@ from numpy import size
 
 import matplotlib.pyplot as plt
 import numpy as np
-name_file = 'binary_contoh'
+name_file = 'data/3 detik/au_1665556707_-778290_11036705_1125'
 file_out= open(f"{name_file}.txt", "w",encoding="latin-1")
 def decode_tostring(payload):
     return payload.decode('latin-1').encode('ascii', errors='xmlcharrefreplace').decode('ascii')
@@ -18,9 +18,7 @@ while byte:
     # print(byte)
     byte = file.read(2)
     data_y = int.from_bytes(byte, "big", signed=True) / 100
-
     y.append(data_y)
-
     # data = file_out.write(str(data_y)+' ')
 y[-1] = y[-2]
 file_out.write(str(y))
@@ -37,4 +35,4 @@ plt.ylabel('amplitudes')
 # plt.yticks(y)
 plt.plot(x, y)  
 # plt.savefig(f'data/{name_file}.png')
-# plt.show()
+plt.show()
