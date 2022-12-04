@@ -8,10 +8,22 @@ import pandas as pd
 from scipy import fftpack
 import json
 import filter 
+import pandas as pd
+import gc
 
 def scaling(x,xmax,xmin):
     x_new = np.float64(((2/xmax)*x) + xmin)
     return x_new
+
+def add_feateures(sgn_fitur):
+    f1 = np.mean(sgn_fitur)
+    f2 = np.max(sgn_fitur)
+    f3 = np.min(sgn_fitur)
+    f4 = np.std(sgn_fitur)
+    f5 = np.median(sgn_fitur)
+    f6 = np.var(sgn_fitur)
+    f7 = np.ptp(sgn_fitur)
+    return np.hstack((f1,f2,f3,f4,f5,f6,f7))
 
 def stft(file_wav,sr=400):
     pass
@@ -41,13 +53,13 @@ def acc_fft(sgn, fs=400):
     power = ((np.abs(tmp) ) / N  )  # type: ignore
     xtime = fftpack.fftfreq(len(sgn)) * fs
     power[0]= 0
-    fig, ax = plt.subplots()
-    plt.title('acc')
-    ax.set_xlim(0, fs / 2)
-    ax.plot(np.arange(len(y)),power,label = 'freq',color='blue')
+    # fig, ax = plt.subplots()
+    # plt.title('acc')
+    # ax.set_xlim(0, fs / 2)
+    # ax.plot(np.arange(len(y)),power,label = 'freq',color='blue')
     
     # plt.savefig(f'cnth.png')
-    plt.show()
+    # plt.show()
     return power
     
 def encode(folder,path_file):
@@ -75,15 +87,15 @@ def encode(folder,path_file):
     # pow = acc_fft(np.array(y) )
     # file_out.write(str(y))
     x = np.arange(len(y))
-    plt.title("plotting")
-    plt.xlabel('samples')
-    plt.ylabel('amplitudes')
-    plt.plot(x, y)  
+    # plt.title("plotting")
+    # plt.xlabel('samples')
+    # plt.ylabel('amplitudes')
+    # plt.plot(x, y)  
     # plt.savefig(f'{folder+name_file}.png')
-    plt.show()
+    # plt.show()
     return np.array(y),x,y
 
-path_folder = './data/temp_data/2022_11_15/acc/'
+path_folder = './data/temp_data/2022_11_14/acc/'
 
 # fitur fft
 # for i in os.listdir(path_folder):
@@ -101,10 +113,20 @@ path_folder = './data/temp_data/2022_11_15/acc/'
 #     f_stft = stft(enc)
 
 # filter sg
+
+dataframe = pd.DataFrame(columns=['mean','max','min','std','median','variance','peak_to_peek'])
+
 for i in os.listdir(path_folder):
     enc,x,y = encode(path_folder,i)
     filt = filter.sg_filter(enc,window_length=15,orde=3)
     # filter.show(x,enc)
-    acc_fft(filt)
-    
-
+    mag = acc_fft(filt)
+    bunch =add_feateures(mag[1:])
+    print(bunch)
+    print('====================')
+    os.remove(os.path.join(path_folder,i)+'.txt')
+    dataframe.loc[len(dataframe.index)] = bunch
+    del mag,enc,filt,bunch
+    gc.collect
+print(dataframe)
+dataframe.to_csv(path_folder+'features_acc_2022_11_14.csv')
