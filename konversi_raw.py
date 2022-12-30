@@ -1,13 +1,13 @@
 # konversi binary raw data audio dan plotting
 # save plotting sesuai nama path_file
-
 import matplotlib.pyplot as plt
 import numpy as np
 import librosa
 import librosa.display
-
+import os
+import gc
 import plotly.graph_objects as go
-
+gc.collect()
 def stft_au(file_raw,sr=16000):
         n_fft=1024
         # fig, ax = plt.subplots()
@@ -110,56 +110,61 @@ def scaling(x,xmax,xmin):
     x_new = np.float64(((2/xmax)*x) + xmin)
     return x_new
 # path_file = '/home/epiphany/dev_irv/irv/Data Pengukuran/au_1668572486_3568204_13976852_1221'
-path_file = '/home/epiphany/dev_irv/irv/data/3 detik/acc#2022_11_13#12_9_9#-777616#11035985#920'
-# 
-name_file = path_file[42:]
+# path_file = '/home/epiphany/dev_irv/irv/data/3 detik/acc#2022_11_13#12_9_9#-777616#11035985#920'
+path_folder = './data/Data Pengukuran 3 Jakarta Bandung Jogja/2022_12_4/acc/'
 
-file_out= open(f"{path_file}.txt", "w",encoding="latin-1")
+for path_file in os.listdir(path_folder):
+    
+    name_file = path_file
 
-f = open(f"{path_file}", "rb")
-byte = f.read(2)
-print(f)
-y = []
-while byte:
-    if 'au' in name_file:
-        pass
-        # print('audio')
+    file_out= open(f"{os.path.join(path_folder,name_file)}.txt", "w",encoding="latin-1")
+
+    f = open(f"{os.path.join(path_folder,name_file)}", "rb")
     byte = f.read(2)
-    data_y = int.from_bytes(byte, "big", signed=True) 
-    if 'au' in name_file:
-        print('audio')    
-    # scaling ini pakai untuk audio
-        tmp = scaling(data_y,xmax=4095 ,xmin=-1) 
-        y.append(tmp)
-        
-        # au_fft(np.array(y) )
-    else:
-        # acc
-        # print('acc')
-        
-        y.append(data_y/100)
-print(y)
-        # acc_fft(np.array(y) )
+    # print(f)
+    y = []
+    while byte:
+        if 'au' in name_file:
+            pass
+            # print('audio')
+        byte = f.read(2)
+        data_y = int.from_bytes(byte, "big", signed=True) 
+        if 'au' in name_file:
+            print('audio')    
+        # scaling ini pakai untuk audio
+            tmp = scaling(data_y,xmax=4095 ,xmin=-1) 
+            y.append(tmp)
+            
+            # au_fft(np.array(y) )
+        else:
+            # acc
+            # print('acc')
+            
+            y.append(data_y/100)
+            # acc_fft(np.array(y) )
 
-y[-1]=y[-2]
-# print(y)
-# file_out.write(str(y))
-x = np.arange(len(y))
+    y[-1]=y[-2]
+    # print(y)
+    # file_out.write(str(y))
+    x = np.arange(len(y))
 
-# frames = convert(y)
-# print(frames.head())
-# t = get_fft_acc(frames)
-# t = get_fft_acc(frames)
-# fig_from_df(t).show()
-# print(t)
-# stft_acc(y)
-# plotting
-plt.title("plotting")
-plt.xlabel('samples')
-plt.ylabel('amplitudes')
-# plt.yticks(y)
-plt.plot(x, y)  
-plt.savefig(f'out_data_pengukuran/{name_file}.png')
-# au_fft(np.array(y))
-acc_fft(np.array(y) )
-plt.show()
+    # frames = convert(y)
+    # print(frames.head())
+    # t = get_fft_acc(frames)
+    # t = get_fft_acc(frames)
+    # fig_from_df(t).show()
+    # print(t)
+    # stft_acc(y)
+    # plotting
+    plt.title("plotting")
+    plt.xlabel('samples')
+    plt.ylabel('amplitudes')
+    # plt.yticks(y)
+    plt.plot(x, y)  
+    plt.savefig(f'{os.path.join(path_folder,name_file)}.png')
+    # au_fft(np.array(y))
+    # acc_fft(np.array(y) )
+    # plt.show()
+    plt.close()
+    del file_out,y,byte,
+    gc.collect()

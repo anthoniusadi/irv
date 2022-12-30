@@ -12,7 +12,7 @@ def create_dirs(folder,name,fitur_sensor):
     #     print("folder {} already exists".format(name))
 
 
-folder = 'data/temp_data/'
+folder = 'data/Data Pengukuran 3 Jakarta Bandung Jogja/'
 unik = list()
 for f in os.listdir(folder):
     nameFile = f.split(sep='_')

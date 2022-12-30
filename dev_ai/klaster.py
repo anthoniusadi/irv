@@ -10,12 +10,19 @@ import json
 import filter 
 import pandas as pd
 import gc
+import reduction
+import elbow
+import kmeans
 
+def finder(df):
+    df2=df.loc[(df['pc_1'] > 120) | (df['pc_2'] > 10)]
+    print(df2)
+    print(df2.index)
 def scaling(x,xmax,xmin):
     x_new = np.float64(((2/xmax)*x) + xmin)
     return x_new
 
-def add_feateures(sgn_fitur):
+def add_features(sgn_fitur,fname):
     f1 = np.mean(sgn_fitur)
     f2 = np.max(sgn_fitur)
     f3 = np.min(sgn_fitur)
@@ -23,7 +30,8 @@ def add_feateures(sgn_fitur):
     f5 = np.median(sgn_fitur)
     f6 = np.var(sgn_fitur)
     f7 = np.ptp(sgn_fitur)
-    return np.hstack((f1,f2,f3,f4,f5,f6,f7))
+    ft8 = np.sqrt(np.mean(sgn_fitur))
+    return np.hstack((f1,f2,f4,f6,f7,ft8,fname))
 
 def stft(file_wav,sr=400):
     pass
@@ -67,7 +75,7 @@ def encode(folder,path_file):
     file_out= open(f"{folder+path_file}.txt", "w",encoding="latin-1")
     f = open(f"{folder+path_file}", "rb")
     byte = f.read(2)
-
+    
     y = []
     while byte:
         byte = f.read(2)
@@ -93,9 +101,10 @@ def encode(folder,path_file):
     # plt.plot(x, y)  
     # plt.savefig(f'{folder+name_file}.png')
     # plt.show()
+    
     return np.array(y),x,y
 
-path_folder = './data/temp_data/2022_11_14/acc/'
+path_folder = './data/Data Pengukuran 3 Jakarta Bandung Jogja/2022_12_4/acc/'
 
 # fitur fft
 # for i in os.listdir(path_folder):
@@ -114,19 +123,30 @@ path_folder = './data/temp_data/2022_11_14/acc/'
 
 # filter sg
 
-dataframe = pd.DataFrame(columns=['mean','max','min','std','median','variance','peak_to_peek'])
+dataframe = pd.DataFrame(columns=['mean','max','std','variance','peak_to_peek','RMS','fname'])
 
 for i in os.listdir(path_folder):
     enc,x,y = encode(path_folder,i)
     filt = filter.sg_filter(enc,window_length=15,orde=3)
     # filter.show(x,enc)
     mag = acc_fft(filt)
-    bunch =add_feateures(mag[1:])
+    bunch =add_features(mag[1:],str(i))
     print(bunch)
     print('====================')
     os.remove(os.path.join(path_folder,i)+'.txt')
     dataframe.loc[len(dataframe.index)] = bunch
     del mag,enc,filt,bunch
     gc.collect
-print(dataframe)
-dataframe.to_csv(path_folder+'features_acc_2022_11_14.csv')
+# print(dataframe)
+dataframe.to_csv('./data/csv/features_acc_2022_12_4.csv')
+# dataframe.drop([634] , inplace=True)
+# dataframe.drop([880,1223] , inplace=True)
+# dataframe.drop([0,3] , inplace=True)
+# 
+principal_df = reduction.transform(dataframe,dataframe.columns,2)
+x1 = principal_df['pc_1'].values
+x2 = principal_df['pc_2'].values
+
+# elbow.elbow_transform(x1,x2)
+kmeans.cluster(x1,x2,4)
+# finder(principal_df)

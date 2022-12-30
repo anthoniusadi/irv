@@ -6,16 +6,17 @@ import os
 from konversi_raw import au_fft
 import librosa
 import scipy as sp
+import gc
+import random
+from scipy.io.wavfile import write
+from pydub import AudioSegment
 ###############################################################################
 def scaling(x,xmax,xmin):
     x_new = np.float64(((2/xmax)*x) + xmin)
     return x_new
 
 def translate(byte):
-    # status = True
- 
-
-
+    # status = True 
     # byte = f.read(2)
     data_y = int.from_bytes(byte, "big", signed=True) 
 
@@ -31,7 +32,13 @@ def openfile(inputName):
     x = myfile.read()
     y = list(x)
     return y
-
+def gain(folder,file):
+    data = AudioSegment.from_wav(os.path.join(folder,file)+'.wav')
+    new = data + 20
+    new.export(os.path.join(folder,file)+"_loud.wav", format='wav')
+    del data
+    gc.collect()
+     
 def swab(input):
     output = b''
     for i in range(24000):
@@ -47,8 +54,9 @@ def toWav(input,folder,fname):
         out_f.setnchannels(1)
         out_f.setsampwidth(2) # number of bytes
         out_f.setframerate(8000)
-        out_f.writeframesraw((input))
+        out_f.writeframesraw(input)
         out_f.close()
+    return out_f
 
 def get_fft(path):
     audio_path = path
@@ -71,7 +79,7 @@ def get_fft(path):
 
 
 # folder = 'data/3 detik/'
-folder = 'data/temp_data/'
+folder = './data/temp_data/2022_11_14/au/'
 # listdata = openfile('data/3 detik/au_1665556707_-778290_11036705_1125')
 # data = swab(listdata)
 # toWav(data)
@@ -83,10 +91,12 @@ for f in os.listdir(folder):
         convert = openfile(folder+f)
         data = swab(convert)
         toWav(data,folder,f)
-
-for i in os.listdir(folder):
-    if i[-4:]=='.wav':
-        print(f'{i} is processed')
-        get_fft(os.path.join(folder,i))
+        gain(folder,f)
+        del data
+        gc.collect()
+# for i in os.listdir(folder):
+#     if i[-4:]=='.wav':
+#         print(f'{i} is processed')
+#         get_fft(os.path.join(folder,i))
 
 # get_fft('data/3 detik/au_1665556707_-778290_11036705_1125.wav')
